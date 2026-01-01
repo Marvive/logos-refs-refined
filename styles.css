@@ -1,5 +1,6 @@
 /* Custom callout for Logos References */
 .callout[data-callout="logos-ref"] {
     --callout-icon: church;
-    --callout-color: 0, 122, 255; /* Subtle blue */
+    --callout-color: 31, 106, 254;
+    /* #1F6AFE */
 }
