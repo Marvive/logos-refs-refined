@@ -380,6 +380,17 @@ const BIBLE_BOOKS: Record<string, string> = {
  * Supports formats like "John 3:16", "Jn 3:16", "Genesis 1:1-5", "1 John 1:9"
  */
 function linkBibleVerses(text: string, version: string = 'esv'): string {
+	// Map translation display names to Logos ref.ly codes
+	const versionMapping: Record<string, string> = {
+		'esv': 'esv',
+		'nasb': 'nasb95',
+		'niv': 'niv2011',
+		'lsb': 'lgcystndrdbblsb',
+		'nlt': 'nlt'
+	};
+
+	const logosVersion = versionMapping[version.toLowerCase()] || version;
+
 	// Regex to match Bible verse patterns
 	// Handles: "John 3:16", "1 John 1:9", "Gen. 1:1-5", "Ps 23:1", etc.
 	const verseRegex = /\b((?:[123]|I{1,3})\s*)?([A-Za-z]+)\.?\s+(\d+):(\d+)(?:\s*[-–]\s*(\d+))?\b/g;
@@ -400,13 +411,12 @@ function linkBibleVerses(text: string, version: string = 'esv'): string {
 			return match; // Not a recognized Bible book, return original text
 		}
 
-		// Build the Logos reference
-		const versionUpper = version.toUpperCase();
+		// Build the Logos reference using the simpler ref.ly format: https://ref.ly/Ge3.15;nasb95
 		const ref = endVerse
 			? `${bookCode}${chapter}.${verse}-${endVerse}`
 			: `${bookCode}${chapter}.${verse}`;
 
-		return `[${match}](https://ref.ly/logosres/${version}?ref=Bible${versionUpper}.${ref})`;
+		return `[${match}](https://ref.ly/${ref};${logosVersion})`;
 	});
 }
 
@@ -527,6 +537,7 @@ class LogosPluginSettingTab extends PluginSettingTab {
 			);
 
 		if (this.plugin.settings.useCustomMetadata) {
+			let addFieldInput: HTMLInputElement;
 			new Setting(this.containerEl)
 				.setName("Add metadata category")
 				.setDesc("Enter a category name (key) to add it to the note properties")
@@ -534,10 +545,10 @@ class LogosPluginSettingTab extends PluginSettingTab {
 					text.setPlaceholder("Example: related notes")
 						.setDisabled(false);
 
-					const inputEl = text.inputEl;
-					inputEl.onkeypress = async (e: KeyboardEvent) => {
-						if (e.key === 'Enter' && inputEl.value.trim()) {
-							const newField = inputEl.value.trim();
+					addFieldInput = text.inputEl;
+					addFieldInput.onkeypress = async (e: KeyboardEvent) => {
+						if (e.key === 'Enter' && addFieldInput.value.trim()) {
+							const newField = addFieldInput.value.trim();
 							if (!this.plugin.settings.customMetadataFields.contains(newField)) {
 								this.plugin.settings.customMetadataFields.push(newField);
 								await this.plugin.saveSettings();
@@ -550,9 +561,8 @@ class LogosPluginSettingTab extends PluginSettingTab {
 					button.setButtonText("Add")
 						.setCta()
 						.onClick(async () => {
-							const inputEl = (this.containerEl.querySelector(".setting-item:last-child input") as HTMLInputElement);
-							if (inputEl && inputEl.value.trim()) {
-								const newField = inputEl.value.trim();
+							if (addFieldInput && addFieldInput.value.trim()) {
+								const newField = addFieldInput.value.trim();
 								if (!this.plugin.settings.customMetadataFields.contains(newField)) {
 									this.plugin.settings.customMetadataFields.push(newField);
 									await this.plugin.saveSettings();
