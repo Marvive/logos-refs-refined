@@ -10,7 +10,7 @@ interface LogosPluginSettings {
 	autoDetectBibleVerses: boolean;
 	bibleTranslation: string;
 	useCustomMetadata: boolean;
-	customMetadataTags: string[];
+	customMetadataFields: string[];
 }
 
 const DEFAULT_SETTINGS: LogosPluginSettings = {
@@ -22,7 +22,7 @@ const DEFAULT_SETTINGS: LogosPluginSettings = {
 	autoDetectBibleVerses: false,
 	bibleTranslation: 'esv',
 	useCustomMetadata: false,
-	customMetadataTags: [],
+	customMetadataFields: [],
 };
 
 export default class LogosReferencePlugin extends Plugin {
@@ -116,10 +116,10 @@ export default class LogosReferencePlugin extends Plugin {
 					const citationPrefix = this.settings.addNewLineBeforeLink ? '\n' : '';
 
 					let metadata = '';
-					if (this.settings.useCustomMetadata && this.settings.customMetadataTags.length > 0) {
-						metadata = '---\ntags:\n';
-						this.settings.customMetadataTags.forEach(tag => {
-							metadata += `  - ${tag}\n`;
+					if (this.settings.useCustomMetadata && this.settings.customMetadataFields.length > 0) {
+						metadata = '---\n';
+						this.settings.customMetadataFields.forEach(field => {
+							metadata += `${field}: \n`;
 						});
 						metadata += '---\n\n';
 					}
@@ -528,18 +528,18 @@ class LogosPluginSettingTab extends PluginSettingTab {
 
 		if (this.plugin.settings.useCustomMetadata) {
 			new Setting(this.containerEl)
-				.setName("Add metadata tag")
-				.setDesc("Enter a tag name to add it to the list")
+				.setName("Add metadata category")
+				.setDesc("Enter a category name (key) to add it to the note properties")
 				.addText((text) => {
-					text.setPlaceholder("Example: sermon")
+					text.setPlaceholder("Example: related notes")
 						.setDisabled(false);
 
 					const inputEl = text.inputEl;
 					inputEl.onkeypress = async (e: KeyboardEvent) => {
 						if (e.key === 'Enter' && inputEl.value.trim()) {
-							const newTag = inputEl.value.trim().replace(/^#/, '');
-							if (!this.plugin.settings.customMetadataTags.contains(newTag)) {
-								this.plugin.settings.customMetadataTags.push(newTag);
+							const newField = inputEl.value.trim();
+							if (!this.plugin.settings.customMetadataFields.contains(newField)) {
+								this.plugin.settings.customMetadataFields.push(newField);
 								await this.plugin.saveSettings();
 								this.display();
 							}
@@ -552,9 +552,9 @@ class LogosPluginSettingTab extends PluginSettingTab {
 						.onClick(async () => {
 							const inputEl = (this.containerEl.querySelector(".setting-item:last-child input") as HTMLInputElement);
 							if (inputEl && inputEl.value.trim()) {
-								const newTag = inputEl.value.trim().replace(/^#/, '');
-								if (!this.plugin.settings.customMetadataTags.contains(newTag)) {
-									this.plugin.settings.customMetadataTags.push(newTag);
+								const newField = inputEl.value.trim();
+								if (!this.plugin.settings.customMetadataFields.contains(newField)) {
+									this.plugin.settings.customMetadataFields.push(newField);
 									await this.plugin.saveSettings();
 									this.display();
 								}
@@ -562,14 +562,14 @@ class LogosPluginSettingTab extends PluginSettingTab {
 						});
 				});
 
-			this.plugin.settings.customMetadataTags.forEach((tag, index) => {
+			this.plugin.settings.customMetadataFields.forEach((field, index) => {
 				new Setting(this.containerEl)
-					.setName(tag)
+					.setName(field)
 					.addButton((button) => {
 						button.setButtonText("Remove")
 							.setWarning()
 							.onClick(async () => {
-								this.plugin.settings.customMetadataTags.splice(index, 1);
+								this.plugin.settings.customMetadataFields.splice(index, 1);
 								await this.plugin.saveSettings();
 								this.display();
 							});

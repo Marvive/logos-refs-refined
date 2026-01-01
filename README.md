@@ -6,7 +6,7 @@
 - **Customizable Callouts**: Change callout titles and use a consistent church icon style with custom colors.
 - **Improved Note Naming**: Automatically use book titles for note filenames with special character stripping for OS compatibility.
 - **Bible Verse Linking**: Automatically detect Bible verses and link them to Logos with your preferred translation (NIV, ESV, NASB, LSB, NLT).
-- **Custom Metadata**: Prepend custom tags/metadata to generated notes automatically.
+- **Custom Metadata**: Prepend custom categories/keys to generated notes automatically.
 
 ## Example Use
 Copy a passage from logos and utilize the paste command within logos-ref plugin, and automatically generate or reference a citation note.
@@ -15,7 +15,7 @@ Copy a passage from logos and utilize the paste command within logos-ref plugin,
 - **Callout Title**: Customize the header of the pasted reference block.
 - **Append "References" to Title**: Use `{Book Title} - References` instead of BibTeX IDs.
 - **Auto-link Bible Verses**: Toggle verse detection and choose your preferred Bible version for Logos links.
-- **Metadata Management**: Enable YAML frontmatter and manage a list of tags to be added to every new reference note.
+- **Metadata Management**: Enable YAML frontmatter and manage a list of categories to be added to every new reference note as separate properties.
 - **Newline Formatting**: Optional clean spacing between links.
 
 ## Setup notes
