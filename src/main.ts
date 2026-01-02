@@ -4,7 +4,7 @@
  * A refined plugin for managing Logos Bible Software references in Obsidian.
  */
 
-import { Editor, MarkdownEditView, Notice, Plugin, TFile, TFolder } from 'obsidian';
+import { Editor, MarkdownView, Notice, Plugin, TFile, TFolder } from 'obsidian';
 import { LogosPluginSettings, DEFAULT_SETTINGS } from './types';
 import { LogosPluginSettingTab } from './settings';
 import { parseLogosClipboard, extractCiteKey, extractBookTitle } from './utils/clipboard-parser';
@@ -13,14 +13,16 @@ import { sanitizeNoteName, generateMetadataFrontmatter } from './utils/file-util
 
 export default class LogosReferencePlugin extends Plugin {
     settings: LogosPluginSettings;
+    private ribbonIconEl: HTMLElement | null = null;
 
     async onload() {
         await this.loadSettings();
+        this.refreshRibbonIcon();
 
         this.addCommand({
             id: 'paste-logos-reference',
             name: 'Paste Logos reference with BibTeX',
-            editorCallback: async (editor: Editor, view: MarkdownEditView) => {
+            editorCallback: async (editor: Editor, view: MarkdownView) => {
                 await this.handlePasteLogosReference(editor, view);
             }
         });
@@ -28,7 +30,7 @@ export default class LogosReferencePlugin extends Plugin {
         this.addCommand({
             id: 'list-bibtex-references',
             name: 'List all BibTeX references',
-            editorCallback: async (editor: Editor, view: MarkdownEditView) => {
+            editorCallback: async (editor: Editor, view: MarkdownView) => {
                 await this.handleListBibtexReferences(editor, view);
             }
         });
@@ -39,7 +41,7 @@ export default class LogosReferencePlugin extends Plugin {
     /**
      * Handles the "Paste Logos reference" command
      */
-    private async handlePasteLogosReference(editor: Editor, view: MarkdownEditView): Promise<void> {
+    private async handlePasteLogosReference(editor: Editor, view: MarkdownView): Promise<void> {
         const file = view.file;
         if (!file) {
             new Notice("No active editor");
@@ -181,7 +183,7 @@ export default class LogosReferencePlugin extends Plugin {
     /**
      * Handles the "List BibTeX references" command
      */
-    private async handleListBibtexReferences(editor: Editor, view: MarkdownEditView): Promise<void> {
+    private async handleListBibtexReferences(editor: Editor, view: MarkdownView): Promise<void> {
         const filePath = view.file?.path;
         if (!filePath) {
             new Notice("No active file");
@@ -252,6 +254,25 @@ export default class LogosReferencePlugin extends Plugin {
 
     async saveSettings() {
         await this.saveData(this.settings);
+    }
+
+    /**
+     * Creates or removes the ribbon icon based on settings
+     */
+    refreshRibbonIcon() {
+        if (this.settings.showRibbonIcon && !this.ribbonIconEl) {
+            this.ribbonIconEl = this.addRibbonIcon('church', 'Paste Logos Reference', async () => {
+                const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+                if (activeView) {
+                    await this.handlePasteLogosReference(activeView.editor, activeView);
+                } else {
+                    new Notice("No active editor found");
+                }
+            });
+        } else if (!this.settings.showRibbonIcon && this.ribbonIconEl) {
+            this.ribbonIconEl.remove();
+            this.ribbonIconEl = null;
+        }
     }
 }
 

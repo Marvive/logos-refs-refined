@@ -176,5 +176,19 @@ export class LogosPluginSettingTab extends PluginSettingTab {
                     });
             });
         }
+
+        new Setting(this.containerEl)
+            .setName("Show ribbon icon")
+            .setDesc("Toggle the church icon in the Obsidian ribbon for one-click pasting")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.showRibbonIcon)
+                    .onChange(async (value) => {
+                        this.plugin.settings.showRibbonIcon = value;
+                        await this.plugin.saveSettings();
+                        // @ts-ignore
+                        this.plugin.refreshRibbonIcon();
+                    })
+            );
     }
 }

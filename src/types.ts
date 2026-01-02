@@ -11,6 +11,7 @@ export interface LogosPluginSettings {
     bibleTranslation: string;
     useCustomMetadata: boolean;
     customMetadataFields: string[];
+    showRibbonIcon: boolean;
 }
 
 export const DEFAULT_SETTINGS: LogosPluginSettings = {
@@ -23,4 +24,5 @@ export const DEFAULT_SETTINGS: LogosPluginSettings = {
     bibleTranslation: 'esv',
     useCustomMetadata: false,
     customMetadataFields: [],
+    showRibbonIcon: true,
 };
