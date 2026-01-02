@@ -13,6 +13,7 @@ interface PluginWithSettings extends Plugin {
 
 export class LogosPluginSettingTab extends PluginSettingTab {
     plugin: PluginWithSettings;
+    private dragIndex: number | null = null;
 
     constructor(app: App, plugin: PluginWithSettings) {
         super(app, plugin);
@@ -163,33 +164,57 @@ export class LogosPluginSettingTab extends PluginSettingTab {
 
             this.plugin.settings.customMetadataFields.forEach((field, index) => {
                 const setting = new Setting(this.containerEl)
-                    .setName(field);
+                    .setName(field)
+                    .addExtraButton(btn => {
+                        btn.setIcon("grip-vertical")
+                            .setTooltip("Drag to reorder")
+                            .extraSettingsEl.classList.add("metadata-grab-handle");
+                        btn.extraSettingsEl.draggable = true;
 
-                if (index > 0) {
-                    setting.addButton((button) => {
-                        button.setIcon("arrow-up")
-                            .setTooltip("Move up")
-                            .onClick(async () => {
-                                const fields = this.plugin.settings.customMetadataFields;
-                                [fields[index], fields[index - 1]] = [fields[index - 1], fields[index]];
-                                await this.plugin.saveSettings();
-                                this.display();
-                            });
-                    });
-                }
+                        btn.extraSettingsEl.addEventListener("dragstart", (e) => {
+                            this.dragIndex = index;
+                            setting.settingEl.classList.add("is-being-dragged");
+                            if (e.dataTransfer) {
+                                e.dataTransfer.effectAllowed = "move";
+                            }
+                        });
 
-                if (index < this.plugin.settings.customMetadataFields.length - 1) {
-                    setting.addButton((button) => {
-                        button.setIcon("arrow-down")
-                            .setTooltip("Move down")
-                            .onClick(async () => {
-                                const fields = this.plugin.settings.customMetadataFields;
-                                [fields[index], fields[index + 1]] = [fields[index + 1], fields[index]];
-                                await this.plugin.saveSettings();
-                                this.display();
-                            });
+                        btn.extraSettingsEl.addEventListener("dragend", () => {
+                            this.dragIndex = null;
+                            setting.settingEl.classList.remove("is-being-dragged");
+                        });
                     });
-                }
+
+                const settingEl = setting.settingEl;
+
+                settingEl.addEventListener("dragover", (e) => {
+                    if (this.dragIndex !== null && this.dragIndex !== index) {
+                        e.preventDefault();
+                        if (e.dataTransfer) {
+                            e.dataTransfer.dropEffect = "move";
+                        }
+                        settingEl.classList.add("drag-over");
+                    }
+                });
+
+                settingEl.addEventListener("dragleave", () => {
+                    settingEl.classList.remove("drag-over");
+                });
+
+                settingEl.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    settingEl.classList.remove("drag-over");
+                    if (this.dragIndex === null || this.dragIndex === index) return;
+
+                    const fields = this.plugin.settings.customMetadataFields;
+                    const draggedField = fields[this.dragIndex];
+                    fields.splice(this.dragIndex, 1);
+                    fields.splice(index, 0, draggedField);
+
+                    void this.plugin.saveSettings().then(() => {
+                        this.display();
+                    });
+                });
 
                 setting.addButton((button) => {
                     button.setButtonText("Remove")

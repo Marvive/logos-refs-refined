@@ -4,3 +4,19 @@
     --callout-color: 31, 106, 254;
     /* #1F6AFE */
 }
+/* Settings Drag and Drop */
+.metadata-grab-handle {
+    cursor: grab;
+    color: var(--text-muted);
+}
+.metadata-grab-handle:active {
+    cursor: grabbing;
+}
+.setting-item.is-being-dragged {
+    opacity: 0.4;
+    background-color: var(--background-secondary-alt);
+    border: 1px dashed var(--interactive-accent);
+}
+.setting-item.drag-over {
+    border-top: 2px solid var(--interactive-accent);
+}
