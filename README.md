@@ -37,5 +37,5 @@ Maintained by **Michael Marvive**. All bugs and feature requests should be filed
 > For those who want to show their appreciation for project development. 👍
 >
 > - 👉 `Star` the Project
-> - ☕️ **Buy me a coffee** @[Github Sponsor](https://github.com/sponsors/Marvive) <iframe src="https://github.com/sponsors/Marvive/button" title="Sponsor Marvive" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+> - ☕️ **Buy me a coffee** @[Github Sponsor](https://github.com/sponsors/Marvive)
 > - ❤️ Provide Feedback in [`Issues`](https://github.com/Marvive/logos-references/issues)
