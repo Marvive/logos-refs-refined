@@ -1,5 +1,5 @@
 # Logos References
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/MichaelMarvive/logos-references?style=for-the-badge&sort=semver)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Marvive/logos-references?style=for-the-badge&sort=semver)
 
 Logos References is an overhauled and highly customizable version of the original [logos-refs](https://github.com/joey-kilgore/logos-refs) plugin by Joey Kilgore. This version features a complete architectural overhaul, ongoing maintenance, and many new features for power users.
 
@@ -32,10 +32,22 @@ Based on the original work by [Joey Kilgore](https://github.com/joey-kilgore). T
 ## Development
 Maintained by **Michael Marvive**. All bugs and feature requests should be filed under the [Issues](https://github.com/Marvive/logos-references/issues).
 
----
+## 🖤 Support & Feedback
 
-> For those who want to show their appreciation for project development. 👍
->
-> - 👉 `Star` the Project
-> - ☕️ **Buy me a coffee** @[Github Sponsor](https://github.com/sponsors/Marvive)
-> - ❤️ Provide Feedback in [`Issues`](https://github.com/Marvive/logos-references/issues)
+**Logos References** is a volunteer-led, open-source project. If it has improved your study workflow, please consider supporting its ongoing development:
+
+- 🌟 **Star the Repository** – Help others find this tool by giving us a star.
+- ☕ **Sponsor Maintenance** – Support the time and effort required to keep this plugin updated and bug-free.
+- 💬 **Join the Conversation** – Report bugs or suggest new features in the [Issue Tracker](https://github.com/Marvive/logos-references/issues).
+
+<br/>
+
+<p align="left">
+  <a href="https://github.com/sponsors/Marvive">
+    <img src="https://img.shields.io/badge/Sponsor_on_GitHub-ea4aaa?style=for-the-badge&logo=github-sponsors&logoColor=white" alt="Sponsor on GitHub" />
+  </a>
+  &nbsp;
+  <a href="https://github.com/Marvive/logos-references/stargazers">
+    <img src="https://img.shields.io/badge/Star_this_Repo-ffcc00?style=for-the-badge&logo=github&logoColor=white" alt="Star this Repo" />
+  </a>
+</p>
