@@ -40,7 +40,7 @@ export function extractCiteKey(bibtex: string): string {
  * Extracts page number from text (typically at the end of a citation)
  */
 export function extractPageNumber(text: string): { cleanedText: string, page: string | null } {
-    const pageRegex = /[\(\[]?(p{1,2}\.? ?\d+([–-]\d+)?)[\)\]]?\.?$/i;
+    const pageRegex = /[([ ]?(p{1,2}\.? ?\d+([–-]\d+)?)[)\]]?\.?$/i;
     const match = text.match(pageRegex);
     if (match) {
         const page = match[1];

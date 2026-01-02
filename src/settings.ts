@@ -3,7 +3,7 @@
  */
 
 import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { FolderSuggestEngine } from './ui/folder-suggest';
+import { FolderSuggest } from './ui/folder-suggest';
 import { LogosPluginSettings } from './types';
 
 interface PluginWithSettings extends Plugin {
@@ -25,10 +25,10 @@ export class LogosPluginSettingTab extends PluginSettingTab {
         containerEl.empty();
 
         new Setting(this.containerEl)
-            .setName("BibTeX note folder")
-            .setDesc("Folder to save BibTeX reference notes")
+            .setName("Bibtex note folder")
+            .setDesc("Folder to save bibtex reference notes")
             .addSearch((text) => {
-                new FolderSuggestEngine(this.app, text.inputEl);
+                new FolderSuggest(this.app, text.inputEl);
                 text.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.bibFolder)
                     .onChange(async (new_folder) => {
@@ -38,16 +38,15 @@ export class LogosPluginSettingTab extends PluginSettingTab {
                         this.plugin.settings.bibFolder = new_folder;
                         await this.plugin.saveSettings();
                     });
-                // @ts-ignore
-                text.containerEl.addClass("BibTeX_search");
+                text.inputEl.parentElement?.classList.add("bibtex-search");
             });
 
         new Setting(this.containerEl)
             .setName("Callout title")
-            .setDesc("The title for the callout block (default is \"Logos Reference\")")
+            .setDesc("The title for the callout block (default is \"logos reference\")")
             .addText((text) =>
                 text
-                    .setPlaceholder("Example: Logos Reference")
+                    .setPlaceholder("Example: logos reference")
                     .setValue(this.plugin.settings.customCalloutTitle)
                     .onChange(async (value) => {
                         this.plugin.settings.customCalloutTitle = value;
@@ -56,8 +55,8 @@ export class LogosPluginSettingTab extends PluginSettingTab {
             );
 
         new Setting(this.containerEl)
-            .setName("Append \"References\" to note title")
-            .setDesc("New notes will be named \"{Book Title} - References\" instead of just the cite key")
+            .setName("Append \"references\" to note title")
+            .setDesc("New book notes will be named \"{Book Title} - references\" instead of just the cite key")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.appendReferencesToTitle)
@@ -80,8 +79,8 @@ export class LogosPluginSettingTab extends PluginSettingTab {
             );
 
         new Setting(this.containerEl)
-            .setName("Auto-detect Bible verses")
-            .setDesc("Automatically detects Bible verse references (e.g., \"John 3:16\", \"Gen 1:1\") and links them to Logos")
+            .setName("Auto-detect bible verses")
+            .setDesc("Automatically detects bible verse references and links them to logos")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.autoDetectBibleVerses)
@@ -94,8 +93,8 @@ export class LogosPluginSettingTab extends PluginSettingTab {
 
         if (this.plugin.settings.autoDetectBibleVerses) {
             new Setting(this.containerEl)
-                .setName("Preferred Bible translation")
-                .setDesc("The translation to use for Logos ref.ly links")
+                .setName("Preferred bible translation")
+                .setDesc("The translation to use for logos ref.ly links")
                 .addDropdown((dropdown) =>
                     dropdown
                         .addOptions({
@@ -186,8 +185,7 @@ export class LogosPluginSettingTab extends PluginSettingTab {
                     .onChange(async (value) => {
                         this.plugin.settings.showRibbonIcon = value;
                         await this.plugin.saveSettings();
-                        // @ts-ignore
-                        this.plugin.refreshRibbonIcon();
+                        (this.plugin as unknown as { refreshRibbonIcon: () => void }).refreshRibbonIcon();
                     })
             );
     }

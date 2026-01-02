@@ -15,7 +15,7 @@ export function linkBibleVerses(text: string, version: string = 'esv'): string {
     // Handles: "John 3:16", "1 John 1:9", "Gen. 1:1-5", "Ps 23:1", etc.
     const verseRegex = /\b((?:[123]|I{1,3})\s*)?([A-Za-z]+)\.?\s+(\d+):(\d+)(?:\s*[-–]\s*(\d+))?\b/g;
 
-    return text.replace(verseRegex, (match, prefix, book, chapter, verse, endVerse) => {
+    return text.replace(verseRegex, (match: string, prefix: string | undefined, book: string, chapter: string, verse: string, endVerse: string | undefined) => {
         // Normalize the book name by combining prefix and book, removing spaces
         let normalizedBook = ((prefix || '') + book).toLowerCase().replace(/\s+/g, '');
 

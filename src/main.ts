@@ -4,7 +4,7 @@
  * A refined plugin for managing Logos Bible Software references in Obsidian.
  */
 
-import { Editor, MarkdownView, Notice, Plugin, TFile, TFolder } from 'obsidian';
+import { Editor, MarkdownView, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
 import { LogosPluginSettings, DEFAULT_SETTINGS } from './types';
 import { LogosPluginSettingTab } from './settings';
 import { parseLogosClipboard, extractCiteKey, extractBookTitle } from './utils/clipboard-parser';
@@ -21,7 +21,7 @@ export default class LogosReferencePlugin extends Plugin {
 
         this.addCommand({
             id: 'paste-logos-reference',
-            name: 'Paste Logos reference with BibTeX',
+            name: 'Paste logos reference with bibtex',
             editorCallback: async (editor: Editor, view: MarkdownView) => {
                 await this.handlePasteLogosReference(editor, view);
             }
@@ -29,7 +29,7 @@ export default class LogosReferencePlugin extends Plugin {
 
         this.addCommand({
             id: 'list-bibtex-references',
-            name: 'List all BibTeX references',
+            name: 'List all bibtex references',
             editorCallback: async (editor: Editor, view: MarkdownView) => {
                 await this.handleListBibtexReferences(editor, view);
             }
@@ -50,7 +50,8 @@ export default class LogosReferencePlugin extends Plugin {
 
         const notePath = file.name;
         const clipboard = await navigator.clipboard.readText();
-        let { mainText, bibtex, page } = parseLogosClipboard(clipboard);
+        const { mainText: rawMainText, bibtex, page } = parseLogosClipboard(clipboard);
+        let mainText = rawMainText;
         const citeKey = extractCiteKey(bibtex);
         const bookTitle = extractBookTitle(bibtex);
         const folder = this.settings.bibFolder.trim() || '';
@@ -152,7 +153,7 @@ export default class LogosReferencePlugin extends Plugin {
     /**
      * Appends a citation link to an existing reference file
      */
-    private async appendCitationToFile(abstractFile: any, linkBack: string): Promise<void> {
+    private async appendCitationToFile(abstractFile: TAbstractFile, linkBack: string): Promise<void> {
         if (!(abstractFile instanceof TFile)) {
             new Notice(`Could not read file: not a valid file`);
             return;
@@ -166,7 +167,7 @@ export default class LogosReferencePlugin extends Plugin {
         if (refNote.includes("## Citations")) {
             updatedContent = refNote.replace(
                 /## Citations([\s\S]*?)((\n#+\s)|$)/,
-                (match, citations, followingHeading) => {
+                (match: string, citations: string, followingHeading: string) => {
                     if (!match.includes(linkBack)) {
                         return `## Citations\n${citations.trim()}\n${citationLine}\n${followingHeading}`;
                     }
@@ -198,7 +199,7 @@ export default class LogosReferencePlugin extends Plugin {
 
         const bibtexReferences = await this.getBibtexFromLinks(links);
         if (bibtexReferences.length === 0) {
-            new Notice("No BibTeX references found in linked notes.");
+            new Notice("No bibtex references found in linked notes");
             return;
         }
 
@@ -209,9 +210,9 @@ export default class LogosReferencePlugin extends Plugin {
             const content = await this.app.vault.read(activeFile);
             const updatedContent = `${content}\n\n## Bibliography\n${bibtexList}`;
             await this.app.vault.modify(activeFile, updatedContent);
-            new Notice("BibTeX references added to the document.");
+            new Notice("References added to the document");
         } else {
-            new Notice("Could not read active file: not a valid file.");
+            new Notice("Could not read active file: not a valid file");
         }
     }
 
@@ -220,7 +221,7 @@ export default class LogosReferencePlugin extends Plugin {
      */
     async getAllLinksInDocument(filePath: string): Promise<string[]> {
         const abstractFile = this.app.vault.getAbstractFileByPath(filePath);
-        if (!(abstractFile instanceof TFile)) return [];
+        if (!(abstractFile instanceof TFile)) return await Promise.resolve([]);
 
         const cache = this.app.metadataCache.getFileCache(abstractFile);
         if (!cache || !cache.links) return [];
@@ -249,7 +250,7 @@ export default class LogosReferencePlugin extends Plugin {
     }
 
     async loadSettings() {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, (await this.loadData() as LogosPluginSettings));
     }
 
     async saveSettings() {
@@ -261,7 +262,7 @@ export default class LogosReferencePlugin extends Plugin {
      */
     refreshRibbonIcon() {
         if (this.settings.showRibbonIcon && !this.ribbonIconEl) {
-            this.ribbonIconEl = this.addRibbonIcon('church', 'Paste Logos Reference', async () => {
+            this.ribbonIconEl = this.addRibbonIcon('church', 'Paste logos reference', async () => {
                 const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (activeView) {
                     await this.handlePasteLogosReference(activeView.editor, activeView);
