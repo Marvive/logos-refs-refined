@@ -1,5 +1,5 @@
 /**
- * Settings tab UI for the Logos Reference Plugin
+ * Settings tab UI for the Logos References Plugin
  */
 
 import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
@@ -44,10 +44,10 @@ export class LogosPluginSettingTab extends PluginSettingTab {
 
         new Setting(this.containerEl)
             .setName("Callout title")
-            .setDesc("The title for the callout block (default is \"Logos Ref\")")
+            .setDesc("The title for the callout block (default is \"Logos Reference\")")
             .addText((text) =>
                 text
-                    .setPlaceholder("Example: Logos Ref")
+                    .setPlaceholder("Example: Logos Reference")
                     .setValue(this.plugin.settings.customCalloutTitle)
                     .onChange(async (value) => {
                         this.plugin.settings.customCalloutTitle = value;

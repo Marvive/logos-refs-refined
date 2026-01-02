@@ -1,9 +1,9 @@
 {
-	"id": "logos-refs",
-	"name": "logos-refs",
-	"version": "1.0.6",
+	"id": "logos-references",
+	"name": "Logos References",
+	"version": "1.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "Easily take refs from Logos and connect them within your notes",
+	"description": "Easily take refs from Logos and connect them within your notes (Overhauled & Customizable)",
 	"author": "Michael Marvive",
 	"authorUrl": "https://github.com/michaelmarvive",
 	"fundingUrl": "https://github.com/sponsors/michaelmarvive",

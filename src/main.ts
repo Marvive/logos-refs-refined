@@ -1,5 +1,5 @@
 /**
- * Logos Reference Plugin - Main Entry Point
+ * Logos References Plugin - Main Entry Point
  * 
  * A refined plugin for managing Logos Bible Software references in Obsidian.
  */
@@ -82,9 +82,9 @@ export default class LogosReferencePlugin extends Plugin {
         await this.saveSettings();
 
         // Build the callout block
-        const calloutTitle = this.settings.customCalloutTitle || 'Logos Ref';
+        const calloutTitle = this.settings.customCalloutTitle || 'Logos Reference';
         const quotedTextParts = [
-            `> [!logos-ref] ${calloutTitle}`,
+            `> [!logos] ${calloutTitle}`,
             `> ${mainText.split('\n').join('\n> ')}`
         ];
 

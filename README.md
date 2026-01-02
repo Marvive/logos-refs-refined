@@ -1,5 +1,7 @@
-# Logos-refs Refined
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Marvive/logos-refs-refined?style=for-the-badge&sort=semver)
+# Logos References
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/MichaelMarvive/logos-references?style=for-the-badge&sort=semver)
+
+Logos References is an overhauled and highly customizable version of the original [logos-refs](https://github.com/joey-kilgore/logos-refs) plugin by Joey Kilgore. This version features a complete architectural overhaul, ongoing maintenance, and many new features for power users.
 
 - Simplify referencing and linking material from Logos Bible Software
 - Easily aggregate bibtex references for your note
@@ -9,7 +11,7 @@
 - **Custom Metadata**: Prepend custom categories/keys to generated notes automatically.
 
 ## Example Use
-Copy a passage from logos and utilize the paste command within logos-ref plugin, and automatically generate or reference a citation note.
+Copy a passage from logos and utilize the paste command within **Logos References** plugin, and automatically generate or reference a citation note.
 
 ## Features & Settings
 - **Callout Title**: Customize the header of the pasted reference block.
@@ -19,13 +21,16 @@ Copy a passage from logos and utilize the paste command within logos-ref plugin,
 - **Newline Formatting**: Optional clean spacing between links.
 
 ## Setup notes
-1. Make sure community plugins are turned on, and install the logos-refs-refined plugin
-2. Under the logos-refs settings, set your reference directory (I like having a `refs` folder)
+1. Make sure community plugins are turned on, and install the **Logos References** plugin
+2. Under the **Logos References** settings, set your reference directory (I like having a `logos-references` folder)
 3. In Logos, under program settings, set citation style to `BibTeX Style`
 4. You are ready to go!
 
+## Credits
+Based on the original work by [Joey Kilgore](https://github.com/joey-kilgore). This version represents a complete overhaul and expansion of the original plugin's capabilities.
+
 ## Development
-This refined version is maintained by Michael Marvive. All bugs and feature requests should be filed under the [Issues](https://github.com/Marvive/logos-refs-refined/issues) in this repo.
+Maintained by **Michael Marvive**. All bugs and feature requests should be filed under the [Issues](https://github.com/MichaelMarvive/logos-references/issues).
 
 ---
 
@@ -33,4 +38,4 @@ This refined version is maintained by Michael Marvive. All bugs and feature requ
 >
 > - 👉 `Star` the Project
 > - ☕️ **Buy me a coffee** @[Github Sponsor](https://github.com/sponsors/michaelmarvive)
-> - ❤️ Provide Feedback in [`Issues`](https://github.com/Marvive/logos-refs-refined/issues) 
+> - ❤️ Provide Feedback in [`Issues`](https://github.com/MichaelMarvive/logos-references/issues)

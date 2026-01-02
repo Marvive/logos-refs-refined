@@ -1,5 +1,5 @@
 /**
- * Settings interface for the Logos Reference Plugin
+ * Settings interface for the Logos References Plugin
  */
 export interface LogosPluginSettings {
     bibFolder: string;
