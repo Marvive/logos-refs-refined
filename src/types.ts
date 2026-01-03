@@ -12,6 +12,9 @@ export interface LogosPluginSettings {
     useCustomMetadata: boolean;
     customMetadataFields: string[];
     showRibbonIcon: boolean;
+    retainFormatting: boolean;
+    addNewLineAfterCallout: boolean;
+    includeReflyLink: boolean;
 }
 
 export const DEFAULT_SETTINGS: LogosPluginSettings = {
@@ -25,4 +28,7 @@ export const DEFAULT_SETTINGS: LogosPluginSettings = {
     useCustomMetadata: false,
     customMetadataFields: [],
     showRibbonIcon: true,
+    retainFormatting: true,
+    addNewLineAfterCallout: false,
+    includeReflyLink: false,
 };

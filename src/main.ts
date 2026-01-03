@@ -4,10 +4,10 @@
  * A refined plugin for managing Logos Bible Software references in Obsidian.
  */
 
-import { Editor, MarkdownView, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
+import { Editor, MarkdownView, Notice, Plugin, TAbstractFile, TFile, TFolder, htmlToMarkdown } from 'obsidian';
 import { LogosPluginSettings, DEFAULT_SETTINGS } from './types';
 import { LogosPluginSettingTab } from './settings';
-import { parseLogosClipboard, extractCiteKey, extractBookTitle } from './utils/clipboard-parser';
+import { parseLogosClipboard, extractCiteKey, extractBookTitle, cleanFormattedText } from './utils/clipboard-parser';
 import { linkBibleVerses } from './utils/bible-linker';
 import { sanitizeNoteName, generateMetadataFrontmatter } from './utils/file-utils';
 
@@ -49,9 +49,60 @@ export default class LogosReferencePlugin extends Plugin {
         }
 
         const notePath = file.name;
-        const clipboard = await navigator.clipboard.readText();
-        const { mainText: rawMainText, bibtex, page } = parseLogosClipboard(clipboard);
-        let mainText = rawMainText;
+
+        // 1. Read plain text version first (most reliable for BibTeX)
+        const plainClipboard = await navigator.clipboard.readText();
+        const { mainText: plainMainText, bibtex: plainBibtex, page: plainPage, reflyLink: plainReflyLink } = parseLogosClipboard(plainClipboard);
+
+        let mainText = plainMainText;
+        let bibtex = plainBibtex;
+        let page = plainPage;
+        let reflyLink = plainReflyLink;
+
+        // 2. Try to read HTML version to get formatted text (only if enabled)
+        if (this.settings.retainFormatting) {
+            try {
+                const clipboardItems = await navigator.clipboard.read();
+                for (const item of clipboardItems) {
+                    if (item.types.includes('text/html')) {
+                        const blob = await item.getType('text/html');
+                        const html = await blob.text();
+                        const markdown = htmlToMarkdown(html);
+
+                        // Parse the markdown version as well
+                        const parsedMarkdown = parseLogosClipboard(markdown);
+
+                        // Use formatted main text
+                        mainText = parsedMarkdown.mainText;
+
+                        // If BibTeX was missing in plain text but present in HTML (unlikely but possible), use it
+                        if (!bibtex && parsedMarkdown.bibtex) {
+                            bibtex = parsedMarkdown.bibtex;
+                        }
+                        if (!page && parsedMarkdown.page) {
+                            page = parsedMarkdown.page;
+                        }
+                        if (!reflyLink && parsedMarkdown.reflyLink) {
+                            reflyLink = parsedMarkdown.reflyLink;
+                        }
+                        break;
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to read HTML from clipboard", e);
+            }
+        }
+
+        if (!bibtex) {
+            new Notice("Could not find BibTeX in clipboard. Please ensure you copied a BibTeX citation from Logos.");
+            return;
+        }
+
+        // Apply specific formatting requested by user (only if enabled)
+        if (this.settings.retainFormatting) {
+            mainText = cleanFormattedText(mainText);
+        }
+
         const citeKey = extractCiteKey(bibtex);
         const bookTitle = extractBookTitle(bibtex);
         const folder = this.settings.bibFolder.trim() || '';
@@ -99,10 +150,16 @@ export default class LogosReferencePlugin extends Plugin {
             ? `${noteName}${pageLabel}`
             : `${citeKey}${pageLabel}`;
 
+        if (this.settings.includeReflyLink && reflyLink) {
+            quotedTextParts.push(`> [Resource Link](${reflyLink})`);
+            quotedTextParts.push(`> `);
+        }
+
         quotedTextParts.push(`> [[${filePath}|${linkAlias}]] ^${blockId}`);
         const quotedText = quotedTextParts.join('\n');
 
-        editor.replaceSelection(`${quotedText}\n`);
+        const newlineAfter = this.settings.addNewLineAfterCallout ? '\n\n' : '\n';
+        editor.replaceSelection(`${quotedText}${newlineAfter}`);
 
         // Create or update the reference file
         await this.createOrUpdateReferenceFile(filePath, folder, bibtex, file.basename, blockId, page);
