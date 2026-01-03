@@ -92,6 +92,18 @@ export class LogosPluginSettingTab extends PluginSettingTab {
             );
 
         new Setting(this.containerEl)
+            .setName("Include Logos resource link")
+            .setDesc("When enabled, the Logos ref.ly hyperlink will be included above the note link")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.includeReflyLink)
+                    .onChange(async (value) => {
+                        this.plugin.settings.includeReflyLink = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        new Setting(this.containerEl)
             .setName("Auto-detect bible verses")
             .setDesc("Automatically detects bible verse references and links them to logos")
             .addToggle((toggle) =>

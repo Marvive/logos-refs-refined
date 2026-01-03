@@ -52,11 +52,12 @@ export default class LogosReferencePlugin extends Plugin {
 
         // 1. Read plain text version first (most reliable for BibTeX)
         const plainClipboard = await navigator.clipboard.readText();
-        const { mainText: plainMainText, bibtex: plainBibtex, page: plainPage } = parseLogosClipboard(plainClipboard);
+        const { mainText: plainMainText, bibtex: plainBibtex, page: plainPage, reflyLink: plainReflyLink } = parseLogosClipboard(plainClipboard);
 
         let mainText = plainMainText;
         let bibtex = plainBibtex;
         let page = plainPage;
+        let reflyLink = plainReflyLink;
 
         // 2. Try to read HTML version to get formatted text (only if enabled)
         if (this.settings.retainFormatting) {
@@ -80,6 +81,9 @@ export default class LogosReferencePlugin extends Plugin {
                         }
                         if (!page && parsedMarkdown.page) {
                             page = parsedMarkdown.page;
+                        }
+                        if (!reflyLink && parsedMarkdown.reflyLink) {
+                            reflyLink = parsedMarkdown.reflyLink;
                         }
                         break;
                     }
@@ -145,6 +149,11 @@ export default class LogosReferencePlugin extends Plugin {
         const linkAlias = this.settings.appendReferencesToTitle
             ? `${noteName}${pageLabel}`
             : `${citeKey}${pageLabel}`;
+
+        if (this.settings.includeReflyLink && reflyLink) {
+            quotedTextParts.push(`> [Resource Link](${reflyLink})`);
+            quotedTextParts.push(`> `);
+        }
 
         quotedTextParts.push(`> [[${filePath}|${linkAlias}]] ^${blockId}`);
         const quotedText = quotedTextParts.join('\n');

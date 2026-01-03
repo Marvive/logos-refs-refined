@@ -74,6 +74,50 @@ Third line.
             expect(result.mainText).toBe("Text result");
             expect(result.bibtex).toContain("@book{citation2023");
         });
+
+        it('should extract ref.ly link and clean mainText', () => {
+            const clipboard = `Quote text (Resource Link: https://ref.ly/logosref/phi.1.1;esv)
+@book{smith2020,
+  title = {Test},
+}`;
+            const result = parseLogosClipboard(clipboard);
+
+            expect(result.mainText).toBe('Quote text');
+            expect(result.reflyLink).toBe('https://ref.ly/logosref/phi.1.1;esv');
+        });
+
+        it('should extract ref.ly link without prefix and clean mainText', () => {
+            const clipboard = `Quote text https://ref.ly/logosref/phi.1.1;esv
+@book{smith2020,
+  title = {Test},
+}`;
+            const result = parseLogosClipboard(clipboard);
+
+            expect(result.mainText).toBe('Quote text');
+            expect(result.reflyLink).toBe('https://ref.ly/logosref/phi.1.1;esv');
+        });
+
+        it('should extract ref.ly link from BibTeX if not in mainText', () => {
+            const clipboard = `Quote text
+@book{smith2020,
+  title = {Test},
+  url = {https://ref.ly/logosref/phi.1.1;esv},
+}`;
+            const result = parseLogosClipboard(clipboard);
+
+            expect(result.mainText).toBe('Quote text');
+            expect(result.reflyLink).toBe('https://ref.ly/logosref/phi.1.1;esv');
+        });
+
+        it('should extract ref.ly link from BibTeX title field', () => {
+            const clipboard = `Quote text
+@book{Waltke_Yu_2007,
+title={[An Old Testament theology](https://ref.ly/logosres/ottheowaltke?ref=Page.p+254&off=1560)},
+}`;
+            const result = parseLogosClipboard(clipboard);
+
+            expect(result.reflyLink).toBe('https://ref.ly/logosres/ottheowaltke?ref=Page.p+254&off=1560');
+        });
     });
 
     describe('extractCiteKey', () => {

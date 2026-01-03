@@ -6,6 +6,7 @@ export interface ParsedClipboard {
     mainText: string;
     bibtex: string;
     page: string | null;
+    reflyLink?: string | null;
 }
 
 /**
@@ -31,15 +32,29 @@ export function parseLogosClipboard(clipboard: string): ParsedClipboard {
         return { mainText: trimmed, bibtex: "", page: null };
     }
 
-    const mainText = parts[0].trim();
+    const mainTextRaw = parts[0].trim();
     let bibtex = parts[1]?.trim() || "";
+
+    // Extract ref.ly link if present anywhere in the clipboard
+    const reflyRegex = /https?:\/\/ref\.ly\/[^\s)}]+/;
+    const reflyMatch = trimmed.match(reflyRegex);
+    let reflyLink = reflyMatch ? reflyMatch[0] : null;
+
+    // Clean mainText by removing the ref.ly link and its container if it's like "(Resource Link: ...)"
+    // only if the link was found in the mainText part
+    let mainText = mainTextRaw;
+    if (reflyLink && mainTextRaw.includes(reflyLink)) {
+        // Remove patterns like " (Resource Link: https://ref.ly/...)" or just the link
+        mainText = mainText.replace(new RegExp(`\\s*\\(?Resource Link:\\s*${reflyLink.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\)?`, 'i'), "");
+        mainText = mainText.replace(reflyLink, "").trim();
+    }
 
     const pageMatch = bibtex.match(/pages\s*=\s*\{([^}]+)\}/i);
     const page = pageMatch ? pageMatch[1] : null;
 
     bibtex = bibtex.replace(/pages\s*=\s*\{[^}]*\},?\s*\n?/gi, "");
 
-    return { mainText, bibtex, page };
+    return { mainText: mainText.trim(), bibtex, page, reflyLink };
 }
 
 /**
