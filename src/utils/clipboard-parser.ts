@@ -94,8 +94,6 @@ export function cleanFormattedText(text: string): string {
 
     // 1. Handle double underscores first (bold -> superscript)
     let processed = text.replace(/__(.*?)__/g, '<sup>$1</sup>');
-    // Also handle double asterisks just in case htmlToMarkdown uses them
-    processed = processed.replace(/\*\*(.*?)\*\*/g, '<sup>$1</sup>');
 
     // 2. Handle single underscores (italics -> asterisk)
     processed = processed.replace(/_(.*?)_/g, '*$1*');

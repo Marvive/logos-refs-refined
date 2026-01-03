@@ -158,14 +158,14 @@ Third line.
             expect(cleanFormattedText(input)).toBe('This is <sup>bold</sup> text.');
         });
 
-        it('should convert double asterisks to superscripts', () => {
+        it('should leave double asterisks as they are', () => {
             const input = 'This is **bold** text.';
-            expect(cleanFormattedText(input)).toBe('This is <sup>bold</sup> text.');
+            expect(cleanFormattedText(input)).toBe('This is **bold** text.');
         });
 
         it('should handle multiple formats in one string', () => {
             const input = 'The _quick_ brown fox __jumps__ over the **lazy** dog.';
-            expect(cleanFormattedText(input)).toBe('The *quick* brown fox <sup>jumps</sup> over the <sup>lazy</sup> dog.');
+            expect(cleanFormattedText(input)).toBe('The *quick* brown fox <sup>jumps</sup> over the **lazy** dog.');
         });
     });
 });
