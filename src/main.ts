@@ -149,7 +149,8 @@ export default class LogosReferencePlugin extends Plugin {
         quotedTextParts.push(`> [[${filePath}|${linkAlias}]] ^${blockId}`);
         const quotedText = quotedTextParts.join('\n');
 
-        editor.replaceSelection(`${quotedText}\n`);
+        const newlineAfter = this.settings.addNewLineAfterCallout ? '\n\n' : '\n';
+        editor.replaceSelection(`${quotedText}${newlineAfter}`);
 
         // Create or update the reference file
         await this.createOrUpdateReferenceFile(filePath, folder, bibtex, file.basename, blockId, page);

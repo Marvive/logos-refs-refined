@@ -80,6 +80,18 @@ export class LogosPluginSettingTab extends PluginSettingTab {
             );
 
         new Setting(this.containerEl)
+            .setName("Add space after callout")
+            .setDesc("Adds an extra blank line after the callout block so that there is space before what you type next")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.addNewLineAfterCallout)
+                    .onChange(async (value) => {
+                        this.plugin.settings.addNewLineAfterCallout = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        new Setting(this.containerEl)
             .setName("Auto-detect bible verses")
             .setDesc("Automatically detects bible verse references and links them to logos")
             .addToggle((toggle) =>

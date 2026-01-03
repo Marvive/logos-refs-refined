@@ -13,6 +13,7 @@ export interface LogosPluginSettings {
     customMetadataFields: string[];
     showRibbonIcon: boolean;
     retainFormatting: boolean;
+    addNewLineAfterCallout: boolean;
 }
 
 export const DEFAULT_SETTINGS: LogosPluginSettings = {
@@ -27,4 +28,5 @@ export const DEFAULT_SETTINGS: LogosPluginSettings = {
     customMetadataFields: [],
     showRibbonIcon: true,
     retainFormatting: true,
+    addNewLineAfterCallout: false,
 };
